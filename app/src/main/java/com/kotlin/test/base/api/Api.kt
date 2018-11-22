@@ -25,7 +25,7 @@ interface Api {
     fun  register(@QueryMap map: Map<String, String>) :Observable<BaseResponse<RegisterBean>>
 
     @GET("/banner/json")
-    fun getHomeBanner() : Observable<BaseResponse<HomeBannerBean>>
+    fun getHomeBanner() : Observable<BaseResponse<List<HomeBannerBean>>>
 
     @GET("/article/list/{pageNum}/json")
     fun getHomeArticle(@Path("pageNum") pageNum : Int) : Observable<BaseResponse<HomeArticleBean>>

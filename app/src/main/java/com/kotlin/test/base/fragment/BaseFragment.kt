@@ -54,9 +54,12 @@ abstract class BaseFragment : Fragment() {
      * 返回视图view
      */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(initContentViewId(), container, false)
+        return inflater.inflate(initContentViewId(), container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         initView()
-        return view
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

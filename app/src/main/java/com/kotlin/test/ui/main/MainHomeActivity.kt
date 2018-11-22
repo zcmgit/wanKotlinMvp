@@ -61,7 +61,7 @@ class MainHomeActivity : BaseMvpActivity<MainHomePresenterImpl>(), MainHomeContr
         var viewPagerAdapter = ViewPagerAdapter(supportFragmentManager)
         viewPagerAdapter.setFragments(fragments)
         viewPager.adapter = viewPagerAdapter
-
+        toolBarTitle.text = "首页"
         //底部菜单导航
         bottomNav.setOnNavigationItemSelectedListener(OnNavigationItemSelectedListener)
 
