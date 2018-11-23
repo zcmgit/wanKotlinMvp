@@ -7,6 +7,10 @@ import android.support.v7.app.AppCompatActivity
 import com.kotlin.test.R
 import com.kotlin.test.base.activity.BaseActivity
 import kotlinx.android.synthetic.main.article_activity.*
+import android.webkit.WebView
+import android.webkit.WebViewClient
+
+
 
 /**
  * @author zcm
@@ -32,12 +36,25 @@ class ArticleActivity : BaseActivity() {
     }
 
     override fun initView() {
-        url = intent.getStringExtra("url")
-        webview.loadUrl(url)
+        webview.setWebViewClient(object : WebViewClient() {
+            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+                view.loadUrl(url)
+                return true
+            }
+        })
+        webview.getSettings().setJavaScriptEnabled(true)//设置webView属性，运行JS脚本
+        webview.loadUrl(intent.getStringExtra("url"))//连接
     }
 
     override fun initLoad() {
     }
 
 
+    override fun onBackPressed() {
+        if(webview.canGoBack()){
+            webview.goBack()
+        }else{
+            super.onBackPressed()
+        }
+    }
 }

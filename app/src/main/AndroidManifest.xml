@@ -21,10 +21,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.regist.RegistActivity"/>
-        <activity android:name=".ui.collect.CollectActivity"/>
-        <activity android:name=".ui.about.AboutActivity"/>
-        <activity android:name=".ui.search.SearchActivity"/>
+        <activity android:name=".ui.regist.RegistActivity" />
+        <activity android:name=".ui.collect.CollectActivity" />
+        <activity android:name=".ui.about.AboutActivity" />
+        <activity android:name=".ui.search.SearchActivity" />
+        <activity android:name=".ui.tixi.SystemArticleListActivity" />
+        <activity android:name=".ui.article.ArticleActivity"
+            />
     </application>
 
 </manifest>

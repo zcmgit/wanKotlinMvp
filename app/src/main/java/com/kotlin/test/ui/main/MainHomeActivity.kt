@@ -9,7 +9,7 @@ import com.kotlin.test.base.adapter.ViewPagerAdapter
 import com.kotlin.test.ui.about.AboutActivity
 import com.kotlin.test.ui.collect.CollectActivity
 import com.kotlin.test.ui.home.HomeFragment
-import com.kotlin.test.ui.home.HotFragment
+import com.kotlin.test.ui.home.ProjectFragment
 import com.kotlin.test.ui.search.SearchActivity
 import com.kotlin.test.ui.tixi.SystemFragment
 import kotlinx.android.synthetic.main.main_activity.*
@@ -56,7 +56,7 @@ class MainHomeActivity : BaseMvpActivity<MainHomePresenterImpl>(), MainHomeContr
         var fragments = arrayListOf<Fragment>().apply {
             add(HomeFragment.newInstance())
             add(SystemFragment.newInstance())
-            add(HotFragment.newInstance())
+            add(ProjectFragment.newInstance())
         }
         var viewPagerAdapter = ViewPagerAdapter(supportFragmentManager)
         viewPagerAdapter.setFragments(fragments)
