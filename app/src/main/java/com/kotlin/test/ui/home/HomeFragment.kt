@@ -1,27 +1,17 @@
 package com.kotlin.test.ui.home
 
-import android.content.Context
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import com.kotlin.test.R
 import com.kotlin.test.base.fragment.BaseMvpFragment
 import com.kotlin.test.bean.HomeBannerBean
-import com.kotlin.test.bean.article.HomeArticleBean
+import com.kotlin.test.bean.article.ArticleBean
 import android.view.LayoutInflater
-import android.widget.AdapterView
-import android.widget.ImageView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
-import com.bumptech.glide.request.RequestOptions
 import com.kotlin.test.base.adapter.ArticleListAdapter
 import com.kotlin.test.ui.article.ArticleActivity
 import com.kotlin.test.weigets.GlideImageLoader
-import com.othershe.baseadapter.interfaces.OnItemClickListener
 import com.youth.banner.Banner
 import com.youth.banner.BannerConfig
 import com.youth.banner.Transformer
-import com.youth.banner.loader.ImageLoader
 import kotlinx.android.synthetic.main.fragment_home.*
 import org.jetbrains.anko.toast
 
@@ -32,10 +22,10 @@ import org.jetbrains.anko.toast
  * @Describe
  */
 class HomeFragment : BaseMvpFragment<HomePresenterImpl>(), HomeContract.View {
-
     private lateinit var articleListAdapter: ArticleListAdapter
     private lateinit var bannerNew: Banner
-    private var pageNum : Int = 0
+    private var pageNum: Int = 0
+    private var changeCollectNum: Int = -1
 
     companion object {
         fun newInstance() = HomeFragment()
@@ -54,7 +44,7 @@ class HomeFragment : BaseMvpFragment<HomePresenterImpl>(), HomeContract.View {
     }
 
     override fun initView() {
-        bannerNew = LayoutInflater.from(context).inflate(R.layout.home_header, homeLayout,false) as Banner
+        bannerNew = LayoutInflater.from(context).inflate(R.layout.home_header, homeLayout, false) as Banner
         bannerNew.run {
             setBannerStyle(BannerConfig.CIRCLE_INDICATOR_TITLE_INSIDE)
             setImageLoader(GlideImageLoader())
@@ -62,7 +52,7 @@ class HomeFragment : BaseMvpFragment<HomePresenterImpl>(), HomeContract.View {
             setBannerAnimation(Transformer.Default)
             isAutoPlay(true)
             setIndicatorGravity(BannerConfig.CENTER)
-            setOnBannerListener{ it ->
+            setOnBannerListener { it ->
 
             }
         }
@@ -72,9 +62,16 @@ class HomeFragment : BaseMvpFragment<HomePresenterImpl>(), HomeContract.View {
         articleList?.layoutManager = LinearLayoutManager(context)
         articleList?.adapter = articleListAdapter
         articleListAdapter.setOnItemClickListener { viewHolder, dataItem, i ->
-            ArticleActivity.start(this!!.context!!,dataItem.link)
+            ArticleActivity.start(this!!.context!!, dataItem.link)
         }
-
+        articleListAdapter.setOnItemChildClickListener(R.id.collectImg, { viewHolder, dataItem, i ->
+            changeCollectNum = i
+            if (dataItem.collect) {
+                presenter.setUnCollect(dataItem.id)
+            } else {
+                presenter.setCollect(dataItem.id)
+            }
+        })
 
         swipeRefreshLayout.setOnRefreshListener {
             swipeRefreshLayout.isRefreshing = true
@@ -106,22 +103,42 @@ class HomeFragment : BaseMvpFragment<HomePresenterImpl>(), HomeContract.View {
         context?.toast("获取失败")
     }
 
-    override fun getArticleSuccess(articles: HomeArticleBean) {
+    override fun getArticleSuccess(articles: ArticleBean) {
         swipeRefreshLayout.isRefreshing = false
         if (articleListAdapter.dataCount == 0) {
             articleListAdapter.setNewData(articles.datas)
         } else {
             articleListAdapter.setLoadMoreData(articles.datas)
         }
-        if(articles.total == pageNum + 1){
+        if (articles.total == pageNum + 1) {
             articleListAdapter.loadEnd()
-        }else{
-            pageNum ++
+        } else {
+            pageNum++
         }
     }
 
     override fun getArticleFail(info: String) {
         swipeRefreshLayout.isRefreshing = false
         context?.toast("获取失败")
+    }
+
+    override fun setCollectSuccess(msg: String) {
+        articleListAdapter.getData(changeCollectNum).collect = true
+        articleListAdapter.change(changeCollectNum + 1)
+        context?.toast("收藏成功")
+    }
+
+    override fun setCollectFail(msg: String) {
+        context?.toast(msg)
+    }
+
+    override fun setUnCollectFail(msg: String) {
+        context?.toast(msg)
+    }
+
+    override fun setUnCollectSuccess(msg: String) {
+        articleListAdapter.getData(changeCollectNum).collect = false
+        articleListAdapter.change(changeCollectNum + 1)
+        context?.toast("取消成功")
     }
 }

@@ -6,10 +6,9 @@ import android.support.v7.widget.LinearLayoutManager
 import com.kotlin.test.R
 import com.kotlin.test.base.activity.BaseMvpActivity
 import com.kotlin.test.base.adapter.ArticleListAdapter
-import com.kotlin.test.bean.article.HomeArticleBean
+import com.kotlin.test.bean.article.ArticleBean
 import com.kotlin.test.ui.article.ArticleActivity
 import kotlinx.android.synthetic.main.fragment_home.*
-import okhttp3.internal.Internal
 
 /**
  * @author zcm
@@ -62,7 +61,7 @@ class SystemArticleListActivity : BaseMvpActivity<SystemArticlePresenter>(), Sys
         presenter.getSystemArticleInfo(pageNum,cid)
     }
 
-    override fun getSystemArticleSuccess(bean: HomeArticleBean) {
+    override fun getSystemArticleSuccess(bean: ArticleBean) {
         swipeRefreshLayout.isRefreshing = false
         if(articleListAdapter.dataCount == 0){
             articleListAdapter.setNewData(bean.datas)

@@ -5,7 +5,7 @@ import com.kotlin.test.base.network.BasePresenter
 import com.kotlin.test.base.network.observer.BaseObserver
 import com.kotlin.test.base.network.request.RequestManager
 import com.kotlin.test.base.network.request.RetrofitManager
-import com.kotlin.test.bean.article.HomeArticleBean
+import com.kotlin.test.bean.article.ArticleBean
 
 /**
  * @author zcm
@@ -15,8 +15,8 @@ import com.kotlin.test.bean.article.HomeArticleBean
 class SystemArticlePresenter (view: SystemArticleContract.View) : BasePresenter<SystemArticleContract.View>(view), SystemArticleContract.Present{
     override fun getSystemArticleInfo(pageNum : Int ,cid : Int) {
         RequestManager.execute(this, RetrofitManager.create(Api :: class.java).getSystemArticle(pageNum, cid),
-                object  : BaseObserver<HomeArticleBean>(){
-                    override fun onSuccess(t: HomeArticleBean) {
+                object  : BaseObserver<ArticleBean>(){
+                    override fun onSuccess(t: ArticleBean) {
                         view.getSystemArticleSuccess(t)
                     }
 

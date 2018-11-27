@@ -1,8 +1,12 @@
 package com.kotlin.test.ui.main
 
+import android.content.Context
+import android.content.Intent
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
+import android.widget.RelativeLayout
+import android.widget.TextView
 import com.kotlin.test.R
 import com.kotlin.test.base.activity.BaseMvpActivity
 import com.kotlin.test.base.adapter.ViewPagerAdapter
@@ -10,8 +14,10 @@ import com.kotlin.test.ui.about.AboutActivity
 import com.kotlin.test.ui.collect.CollectActivity
 import com.kotlin.test.ui.home.HomeFragment
 import com.kotlin.test.ui.home.ProjectFragment
+import com.kotlin.test.ui.login.LoginActivity
 import com.kotlin.test.ui.search.SearchActivity
 import com.kotlin.test.ui.tixi.SystemFragment
+import com.kotlin.test.util.SPUtil
 import kotlinx.android.synthetic.main.main_activity.*
 
 /**
@@ -20,6 +26,16 @@ import kotlinx.android.synthetic.main.main_activity.*
  * @Describe
  */
 class MainHomeActivity : BaseMvpActivity<MainHomePresenterImpl>(), MainHomeContract.View {
+
+    private lateinit var userNameTxt: TextView
+
+    companion object {
+        fun start(context: Context){
+            var intent = Intent(context,MainHomeActivity::class.java)
+            context.startActivity(intent)
+        }
+    }
+
     override fun initPresenter(): MainHomePresenterImpl {
         return MainHomePresenterImpl(this)
     }
@@ -32,7 +48,6 @@ class MainHomeActivity : BaseMvpActivity<MainHomePresenterImpl>(), MainHomeContr
     }
 
 
-
     override fun initView() {
         //toolbar点击打开左侧菜单
         toolbar.setNavigationOnClickListener {
@@ -43,7 +58,7 @@ class MainHomeActivity : BaseMvpActivity<MainHomePresenterImpl>(), MainHomeContr
         toolbar.inflateMenu(R.menu.menu_toolbar)
 
         toolbar.setOnMenuItemClickListener { item ->
-            when(item.itemId){
+            when (item.itemId) {
                 R.id.action_search -> {
                     showSearch()
                     return@setOnMenuItemClickListener true
@@ -68,7 +83,7 @@ class MainHomeActivity : BaseMvpActivity<MainHomePresenterImpl>(), MainHomeContr
         //侧滑菜单：
         navigetion_view.setNavigationItemSelectedListener { item ->
             drawerLayout.closeDrawer(GravityCompat.START)
-            when(item.itemId){
+            when (item.itemId) {
                 R.id.nav_item_collect -> {//收藏
                     showCollect()
                     return@setNavigationItemSelectedListener true
@@ -84,14 +99,28 @@ class MainHomeActivity : BaseMvpActivity<MainHomePresenterImpl>(), MainHomeContr
             }
             return@setNavigationItemSelectedListener false
         }
+
+        userNameTxt = navigetion_view.getHeaderView(0).findViewById(R.id.usernameTxt)
+        if(SPUtil.getUserName().equals("")){
+            userNameTxt.text = "未登录"
+        }else{
+            userNameTxt.text = SPUtil.getUserName()
+        }
+        var headLayout = navigetion_view.getHeaderView(0).findViewById(R.id.headLayout) as RelativeLayout
+        headLayout.setOnClickListener {
+            if (SPUtil.getUserName().equals("")) {
+                LoginActivity.start(this)
+                finish()
+            }
+        }
     }
 
     override fun initLoad() {
     }
 
-    private var OnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener{ item ->
+    private var OnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         toolBarTitle.text = item.title
-        when (item.itemId){
+        when (item.itemId) {
             R.id.menu_home -> {
                 viewPager.currentItem = 0
                 return@OnNavigationItemSelectedListener true
@@ -100,7 +129,7 @@ class MainHomeActivity : BaseMvpActivity<MainHomePresenterImpl>(), MainHomeContr
                 viewPager.currentItem = 1
                 return@OnNavigationItemSelectedListener true
             }
-            R.id.menu_hot ->{
+            R.id.menu_project -> {
                 viewPager.currentItem = 2
                 return@OnNavigationItemSelectedListener true
             }
@@ -108,19 +137,24 @@ class MainHomeActivity : BaseMvpActivity<MainHomePresenterImpl>(), MainHomeContr
         false
     }
 
-    fun showLoginOutDialog(){
+    fun showLoginOutDialog() {
 
     }
 
-    fun showCollect(){
+    fun showCollect() {
         CollectActivity.start(this)
     }
 
-    fun showAbout(){
+    fun showAbout() {
         AboutActivity.start(this)
     }
 
-    fun showSearch(){
+    fun showSearch() {
         SearchActivity.start(this)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        SPUtil.remove("username")
     }
 }

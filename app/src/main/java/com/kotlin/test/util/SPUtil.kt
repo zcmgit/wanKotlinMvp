@@ -23,5 +23,9 @@ class SPUtil {
         fun getUserName(): String {
             return SharedPreferencesHelper.getSP("username", "")
         }
+
+        fun remove(key: String){
+            return SharedPreferencesHelper.remove(key)
+        }
     }
 }

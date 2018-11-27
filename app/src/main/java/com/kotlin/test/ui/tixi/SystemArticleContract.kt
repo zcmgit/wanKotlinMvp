@@ -1,7 +1,7 @@
 package com.kotlin.test.ui.tixi
 
 import com.kotlin.test.base.network.BaseView
-import com.kotlin.test.bean.article.HomeArticleBean
+import com.kotlin.test.bean.article.ArticleBean
 
 /**
  * @author zcm
@@ -10,7 +10,7 @@ import com.kotlin.test.bean.article.HomeArticleBean
  */
 class SystemArticleContract{
     interface View : BaseView{
-        fun getSystemArticleSuccess(bean: HomeArticleBean)
+        fun getSystemArticleSuccess(bean: ArticleBean)
         fun getSystemArticleFail(msg : String)
     }
 

@@ -12,8 +12,8 @@
         android:title="体系">
     </item>
     <item
-        android:id="@+id/menu_hot"
+        android:id="@+id/menu_project"
         android:icon="@mipmap/ic_launcher"
-        android:title="热门">
+        android:title="项目">
     </item>
 </menu>

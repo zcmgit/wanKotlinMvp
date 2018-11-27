@@ -1,7 +1,6 @@
 package com.kotlin.test.ui.tixi
 
 import com.kotlin.test.base.network.BaseView
-import com.kotlin.test.bean.article.HomeArticleBean
 import com.kotlin.test.bean.system.SystemInfoBean
 
 /**

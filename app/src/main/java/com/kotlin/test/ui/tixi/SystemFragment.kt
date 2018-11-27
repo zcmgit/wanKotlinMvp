@@ -4,11 +4,9 @@ import android.support.v7.widget.LinearLayoutManager
 import com.kotlin.test.R
 import com.kotlin.test.base.adapter.SystemAdapter
 import com.kotlin.test.base.fragment.BaseMvpFragment
-import com.kotlin.test.bean.article.HomeArticleBean
 import com.kotlin.test.bean.eventbus.SystemItemId
 import com.kotlin.test.bean.system.SystemInfoBean
 import kotlinx.android.synthetic.main.fragment_system.*
-import kotlinx.android.synthetic.main.system_info_list.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode

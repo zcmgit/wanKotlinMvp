@@ -20,8 +20,14 @@ class ArticleListAdapter (context: Context?, datas: List<DataItem>?, isLoadMore:
     override fun convert(p0: ViewHolder, p1: DataItem, p2: Int) {
         with(p0){
             setText(R.id.title,p1.title)
+            setText(R.id.typeTxt,p1.chapterName)
+            setText(R.id.author,p1.author)
+            setText(R.id.time,p1.niceDate)
+            if (p1.collect){
+                setBgResource(R.id.collectImg,R.mipmap.collect_select)
+            }else{
+                setBgResource(R.id.collectImg,R.mipmap.collect_unselect)
+            }
         }
     }
-
-
 }

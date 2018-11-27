@@ -1,12 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/cl_ffffff">
 
     <TextView
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:textColor="@color/cl_999999"/>
+        android:layout_toLeftOf="@id/time"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:paddingBottom="10dp"
+        android:paddingLeft="14dp"
+        android:paddingTop="15dp"
+        android:text="wq"
+        android:textColor="@color/cl_000000" />
+
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:gravity="right"
+        android:paddingBottom="10dp"
+        android:paddingTop="15dp"
+        android:text="time"
+        android:textColor="@color/cl_999999"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/typeTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/rect_cccccc_ffffff_6"
+        android:paddingBottom="4dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="4dp"
+        android:text="项目"
+        android:textColor="@color/cl_999999"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/author"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title"
+        android:layout_marginLeft="12dp"
+        android:layout_toRightOf="@id/typeTxt"
+        android:paddingBottom="4dp"
+        android:paddingTop="4dp"
+        android:text="作者"
+        android:textColor="@color/cl_999999"
+        android:textSize="12sp" />
+
+    <ImageView
+        android:id="@+id/collectImg"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/time"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/typeTxt"
+        android:background="@color/cl_cccccc" />
 </RelativeLayout>

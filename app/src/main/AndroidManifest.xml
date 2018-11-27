@@ -26,8 +26,8 @@
         <activity android:name=".ui.about.AboutActivity" />
         <activity android:name=".ui.search.SearchActivity" />
         <activity android:name=".ui.tixi.SystemArticleListActivity" />
-        <activity android:name=".ui.article.ArticleActivity"
-            />
+        <activity android:name=".ui.article.ArticleActivity"/>
+        <activity android:name=".ui.login.LoginActivity"/>
     </application>
 
 </manifest>

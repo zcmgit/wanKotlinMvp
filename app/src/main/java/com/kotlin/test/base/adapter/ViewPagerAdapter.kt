@@ -3,6 +3,7 @@ package com.kotlin.test.base.adapter
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v7.widget.DialogTitle
 
 /**
@@ -10,7 +11,7 @@ import android.support.v7.widget.DialogTitle
  * @create 2018/11/19
  * @Describe
  */
-class ViewPagerAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(fragmentManager){
+class ViewPagerAdapter(fragmentManager: FragmentManager) : FragmentStatePagerAdapter(fragmentManager){
 
     private lateinit var fragments : List<Fragment>
     private lateinit var titles : List<String>
@@ -30,4 +31,7 @@ class ViewPagerAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(
         return fragments.size
     }
 
+    override fun getPageTitle(position: Int): CharSequence? {
+        return titles.get(position)
+    }
 }

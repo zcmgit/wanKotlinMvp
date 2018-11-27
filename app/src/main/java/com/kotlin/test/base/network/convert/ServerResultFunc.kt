@@ -17,10 +17,12 @@ import io.reactivex.functions.Function
 </T> */
 class ServerResultFunc<E> : Function<BaseResponse<E>, E> {
     override fun apply(@NonNull response: BaseResponse<E>): E {
-        return if (0 == response.errorCode) {
-            response.data!!
-        } else {
+        if (0 != response.errorCode) {
             throw ServerException(response.errorCode, response.errorMsg!!)
         }
+        if(response.data == null){
+            response.data = "" as E
+        }
+        return response.data!!
     }
 }

@@ -5,8 +5,6 @@ import com.kotlin.test.base.network.BasePresenter
 import com.kotlin.test.base.network.observer.BaseObserver
 import com.kotlin.test.base.network.request.RequestManager
 import com.kotlin.test.base.network.request.RetrofitManager
-import com.kotlin.test.bean.LoginBean
-import com.kotlin.test.bean.article.HomeArticleBean
 import com.kotlin.test.bean.system.SystemInfoBean
 
 /**
