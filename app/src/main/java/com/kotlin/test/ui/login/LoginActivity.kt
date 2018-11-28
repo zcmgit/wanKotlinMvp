@@ -3,12 +3,11 @@ package com.kotlin.test.ui.login
 import android.content.Context
 import android.content.Intent
 import com.kotlin.test.R
-import com.kotlin.test.base.activity.BaseActivity
 import com.kotlin.test.base.activity.BaseMvpActivity
 import com.kotlin.test.bean.LoginBean
 import com.kotlin.test.ui.main.MainHomeActivity
 import com.kotlin.test.ui.regist.RegistActivity
-import com.kotlin.test.util.SPUtil
+import com.kotlin.test.util.sp.SPUtil
 import kotlinx.android.synthetic.main.login_activity.*
 import org.jetbrains.anko.toast
 

@@ -17,7 +17,7 @@ data class DataItem (
         val originId: Int = 0,
         val chapterName: String = "",
         val link: String = "",
-        val title: String = "",
+        var title: String = "",
         val type: Int = 0,
         val userId: Int = 0,
         val tags: List<TagItem>,

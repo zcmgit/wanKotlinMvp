@@ -46,4 +46,14 @@ interface Api {
 
     @POST("/lg/uncollect_originId/{id}/json")
     fun setUnCollect(@Path("id") id: Int): Observable<BaseResponse<String>>
+
+    @GET("/hotkey/json")
+    fun getHotInfos(): Observable<BaseResponse<List<HotBean>>>
+
+    @GET("/friend/json")
+    fun getFriendWebInfos(): Observable<BaseResponse<List<WebBean>>>
+
+    @POST("/article/query/{pageNum}/json")
+    fun searchInfoByKey(@Path("pageNum") pageNum: Int, @Query("k") key: String) : Observable<BaseResponse<ArticleBean>>
+
 }

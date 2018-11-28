@@ -3,6 +3,7 @@ package com.kotlin.test.base.adapter
 import android.content.Context
 import com.kotlin.test.R
 import com.kotlin.test.bean.article.DataItem
+import com.kotlin.test.util.DelHTMLTag
 import com.othershe.baseadapter.ViewHolder
 import com.othershe.baseadapter.base.CommonBaseAdapter
 

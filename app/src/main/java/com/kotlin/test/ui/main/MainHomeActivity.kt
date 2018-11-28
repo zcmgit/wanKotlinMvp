@@ -17,7 +17,7 @@ import com.kotlin.test.ui.home.ProjectFragment
 import com.kotlin.test.ui.login.LoginActivity
 import com.kotlin.test.ui.search.SearchActivity
 import com.kotlin.test.ui.tixi.SystemFragment
-import com.kotlin.test.util.SPUtil
+import com.kotlin.test.util.sp.SPUtil
 import kotlinx.android.synthetic.main.main_activity.*
 
 /**

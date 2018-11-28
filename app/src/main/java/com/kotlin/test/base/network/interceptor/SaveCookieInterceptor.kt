@@ -1,6 +1,6 @@
 package com.kotlin.test.base.network.interceptor
 
-import com.kotlin.test.util.SPUtil
+import com.kotlin.test.util.sp.SPUtil
 
 import java.io.IOException
 

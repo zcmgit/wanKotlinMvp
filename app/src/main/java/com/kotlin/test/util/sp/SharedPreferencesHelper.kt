@@ -1,4 +1,4 @@
-package com.kotlin.test.util
+package com.kotlin.test.util.sp
 
 import android.annotation.SuppressLint
 import android.content.Context
