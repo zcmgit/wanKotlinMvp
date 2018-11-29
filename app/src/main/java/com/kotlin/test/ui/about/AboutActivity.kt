@@ -7,6 +7,7 @@ import com.kotlin.test.R
 import com.kotlin.test.base.activity.BaseActivity
 import com.kotlin.test.base.activity.BaseMvpActivity
 import com.kotlin.test.base.fragment.BaseMvpFragment
+import kotlinx.android.synthetic.main.activity_about.*
 import kotlinx.android.synthetic.main.tool_bar.*
 
 /**
@@ -14,13 +15,14 @@ import kotlinx.android.synthetic.main.tool_bar.*
  * @create 2018/11/19
  * @Describe
  */
-class AboutActivity : BaseMvpActivity<AboutPresentImpl>(),AboutContract.View{
+class AboutActivity : BaseMvpActivity<AboutPresentImpl>(), AboutContract.View {
     companion object {
-        fun start(context: Context){
-            var intent = Intent(context,AboutActivity::class.java)
+        fun start(context: Context) {
+            var intent = Intent(context, AboutActivity::class.java)
             context.startActivity(intent)
         }
     }
+
     override fun initPresenter(): AboutPresentImpl {
         return AboutPresentImpl(this)
     }
@@ -38,9 +40,15 @@ class AboutActivity : BaseMvpActivity<AboutPresentImpl>(),AboutContract.View{
         toolbar.setNavigationOnClickListener {
             finish()
         }
+        versionTxt.text = "v"+getVersionName(this)
     }
 
     override fun initLoad() {
+
     }
 
+    private fun getVersionName(context: Context): String {
+        var verName = context.packageManager.getPackageInfo(context.packageName, 0).versionName
+        return verName
+    }
 }
