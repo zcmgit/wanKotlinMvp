@@ -11,6 +11,7 @@ import android.widget.TextView
 import com.kotlin.test.R
 import com.kotlin.test.base.activity.BaseMvpActivity
 import com.kotlin.test.base.adapter.ViewPagerAdapter
+import com.kotlin.test.base.dialog.LogoutDialog
 import com.kotlin.test.ui.about.AboutActivity
 import com.kotlin.test.ui.collect.CollectActivity
 import com.kotlin.test.ui.home.HomeFragment
@@ -20,6 +21,7 @@ import com.kotlin.test.ui.search.SearchActivity
 import com.kotlin.test.ui.tixi.SystemFragment
 import com.kotlin.test.util.sp.SPUtil
 import kotlinx.android.synthetic.main.main_activity.*
+import org.jetbrains.anko.toast
 
 /**
  * @author zcm
@@ -156,7 +158,12 @@ class MainHomeActivity : BaseMvpActivity<MainHomePresenterImpl>(), MainHomeContr
     }
 
     fun showLoginOutDialog() {
+        LogoutDialog.show(supportFragmentManager,object : LogoutDialog.OnLogoutListener{
+            override fun logout() {
+                presenter.logout()
+            }
 
+        })
     }
 
     fun showCollect() {
@@ -171,8 +178,14 @@ class MainHomeActivity : BaseMvpActivity<MainHomePresenterImpl>(), MainHomeContr
         SearchActivity.start(this)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+
+    override fun logoutSuccess(msg: String) {
         SPUtil.remove("username")
+        SPUtil.remove("cookies")
+        finish()
+    }
+
+    override fun logoutFail(msg: String) {
+        toast(msg)
     }
 }

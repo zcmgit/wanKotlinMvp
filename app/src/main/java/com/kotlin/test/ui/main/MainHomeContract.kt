@@ -10,8 +10,10 @@ import com.kotlin.test.base.network.BaseView
 class MainHomeContract{
     interface View : BaseView{
 
+        fun logoutSuccess(msg: String)
+        fun logoutFail(msg: String)
     }
     interface  Presenter{
-
+        fun logout()
     }
 }
