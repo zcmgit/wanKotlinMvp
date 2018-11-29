@@ -2,16 +2,12 @@ package com.kotlin.test.ui.home
 
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
 import com.kotlin.test.R
-import com.kotlin.test.base.adapter.ArticleListAdapter
-import com.kotlin.test.base.adapter.SystemAdapter
 import com.kotlin.test.base.adapter.ViewPagerAdapter
 import com.kotlin.test.base.fragment.BaseMvpFragment
 import com.kotlin.test.bean.ProjectBean
 import com.kotlin.test.ui.project.ProjectArticleListFragment
 import kotlinx.android.synthetic.main.fragment_project.*
-import kotlinx.android.synthetic.main.fragment_system.*
 
 /**
  * @author zcm

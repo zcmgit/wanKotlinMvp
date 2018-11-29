@@ -50,7 +50,7 @@ class SystemFragment : BaseMvpFragment<SystemPresenterImpl>(),SystemContract.Vie
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun SystemItemEvent(event: SystemItemId) {
-        SystemArticleListActivity.start(this!!.context!!,event.id)
+        SystemArticleListActivity.start(this!!.context!!,event.id,event.name)
     }
 
     override fun initLoad() {

@@ -45,17 +45,22 @@ class ProjectArticleListFragment : BaseMvpFragment<ProjectArticleListPreImpl>(),
     }
 
     override fun initView() {
-        adapter = ArticleListAdapter(this!!.context!!,null,false)
+        adapter = ArticleListAdapter(this!!.context!!,null,false).apply {
+            setOnItemClickListener { holder, item, i ->
+                ArticleActivity.start(context,item.link)
+            }
+
+            setOnLoadMoreListener {
+                presenter.getProjectItem(pageNum,cid)
+            }
+        }
         var manage = LinearLayoutManager(context)
         articleList.layoutManager = manage
         articleList.adapter = adapter
 
-        adapter.setOnItemClickListener { holder, item, i ->
-            ArticleActivity.start(this!!.context!!,item.link)
-        }
-
         swipeRefreshLayout.setOnRefreshListener {
             swipeRefreshLayout.isRefreshing = true
+            pageNum = 0
             presenter.getProjectItem(pageNum,cid)
         }
     }
@@ -66,12 +71,12 @@ class ProjectArticleListFragment : BaseMvpFragment<ProjectArticleListPreImpl>(),
 
     override fun getProjectItemSuccess(articleInfos: ArticleBean) {
         swipeRefreshLayout.isRefreshing = false
-        if(adapter.dataCount == 0){
+        if(pageNum == 0){
             adapter.setNewData(articleInfos.datas)
         }else{
             adapter.setLoadMoreData(articleInfos.datas)
         }
-        if(pageNum == articleInfos.total){
+        if(pageNum == articleInfos.pageCount){
             return
         }
         pageNum ++

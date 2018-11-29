@@ -12,9 +12,13 @@ class CollectContract {
     interface View : BaseView {
         fun getCollectSuccess(collectInfo: ArticleBean)
         fun getCollectFail(msg: String)
+
+        fun setUnCollectSuccess(msg: String)
+        fun setUnCollectFail(msg: String)
     }
 
     interface Presenter {
         fun getCollectInfos(pageNum: Int)
+        fun setUnCollect(id: Int,organId: Int)
     }
 }

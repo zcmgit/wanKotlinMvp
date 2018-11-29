@@ -56,4 +56,7 @@ interface Api {
     @POST("/article/query/{pageNum}/json")
     fun searchInfoByKey(@Path("pageNum") pageNum: Int, @Query("k") key: String) : Observable<BaseResponse<ArticleBean>>
 
+    @POST("/lg/uncollect/{id}/json")
+    fun unCollectListArticle(@Path("id") id: Int,@Query("originId") originId: Int): Observable<BaseResponse<String>>
+
 }

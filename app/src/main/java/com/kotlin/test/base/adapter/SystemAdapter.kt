@@ -32,7 +32,7 @@ class SystemAdapter(context: Context, sysTemInfos: List<SystemInfoBean>?, isOpen
             listView.layoutManager = manage
             listView.adapter = adapter
             adapter.setOnItemClickListener { holder, systemItemInfoBean, i ->
-                EventBus.getDefault().post(SystemItemId(systemItemInfoBean.id))
+                EventBus.getDefault().post(SystemItemId(systemItemInfoBean.id,systemItemInfoBean.name))
             }
         }
     }

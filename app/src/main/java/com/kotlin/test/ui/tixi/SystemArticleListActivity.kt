@@ -9,6 +9,7 @@ import com.kotlin.test.base.adapter.ArticleListAdapter
 import com.kotlin.test.bean.article.ArticleBean
 import com.kotlin.test.ui.article.ArticleActivity
 import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.tool_bar.*
 
 /**
  * @author zcm
@@ -17,11 +18,14 @@ import kotlinx.android.synthetic.main.fragment_home.*
  */
 class SystemArticleListActivity : BaseMvpActivity<SystemArticlePresenter>(), SystemArticleContract.View {
     private var cid: Int = 0
-    private var pageNum : Int = 0
+    private var title: String = ""
+    private var pageNum: Int = 0
+
     companion object {
-        fun start(context: Context, cid: Int){
-            var intent = Intent(context,SystemArticleListActivity::class.java)
-            intent.putExtra("cid",cid)
+        fun start(context: Context, cid: Int, title: String) {
+            var intent = Intent(context, SystemArticleListActivity::class.java)
+            intent.putExtra("cid", cid)
+            intent.putExtra("title", title)
             context.startActivity(intent)
         }
     }
@@ -37,41 +41,53 @@ class SystemArticleListActivity : BaseMvpActivity<SystemArticlePresenter>(), Sys
     }
 
     override fun initData() {
-        cid = intent.getIntExtra("cid",0)
+        cid = intent.getIntExtra("cid", 0)
+        title = intent.getStringExtra("title")
     }
 
     override fun initView() {
-        articleListAdapter = ArticleListAdapter(this, null, true)
+        toolbar.navigationIcon = this.resources.getDrawable(R.mipmap.back_icon)
+        toolBarTitle.text = title
+        toolbar.setNavigationOnClickListener {
+            finish()
+        }
+
+        articleListAdapter = ArticleListAdapter(this, null, true).apply {
+            setOnLoadMoreListener {
+                presenter.getSystemArticleInfo(pageNum, cid)
+            }
+            setOnItemClickListener { viewHolder, dataItem, i ->
+                ArticleActivity.start(context, dataItem.link)
+            }
+            setOnLoadMoreListener {
+                presenter.getSystemArticleInfo(pageNum, cid)
+            }
+        }
         articleList?.layoutManager = LinearLayoutManager(this)
         articleList?.adapter = articleListAdapter
-        articleListAdapter.setOnItemClickListener { viewHolder, dataItem, i ->
-            ArticleActivity.start(this,dataItem.link)
-        }
 
         swipeRefreshLayout.setOnRefreshListener {
             swipeRefreshLayout.isRefreshing = true
-            presenter.getSystemArticleInfo(0,cid)
-        }
-        articleListAdapter.setOnLoadMoreListener {
-            presenter.getSystemArticleInfo(pageNum,cid)
+            pageNum = 0
+            presenter.getSystemArticleInfo(pageNum, cid)
         }
     }
 
     override fun initLoad() {
-        presenter.getSystemArticleInfo(pageNum,cid)
+        presenter.getSystemArticleInfo(pageNum, cid)
     }
 
     override fun getSystemArticleSuccess(bean: ArticleBean) {
         swipeRefreshLayout.isRefreshing = false
-        if(articleListAdapter.dataCount == 0){
+        if (pageNum == 0) {
             articleListAdapter.setNewData(bean.datas)
-        }else{
+        } else {
             articleListAdapter.setLoadMoreData(bean.datas)
         }
-        if(pageNum == bean.total){
+        if (pageNum + 1 == bean.pageCount) {
             return
         }
-        pageNum ++
+        pageNum++
     }
 
     override fun getSystemArticleFail(msg: String) {

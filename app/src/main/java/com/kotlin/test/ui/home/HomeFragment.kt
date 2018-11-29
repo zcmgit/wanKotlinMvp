@@ -7,12 +7,17 @@ import com.kotlin.test.bean.HomeBannerBean
 import com.kotlin.test.bean.article.ArticleBean
 import android.view.LayoutInflater
 import com.kotlin.test.base.adapter.ArticleListAdapter
+import com.kotlin.test.bean.article.DataItem
+import com.kotlin.test.bean.eventbus.SystemItemId
 import com.kotlin.test.ui.article.ArticleActivity
 import com.kotlin.test.weigets.GlideImageLoader
 import com.youth.banner.Banner
 import com.youth.banner.BannerConfig
 import com.youth.banner.Transformer
 import kotlinx.android.synthetic.main.fragment_home.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.toast
 
 
@@ -58,23 +63,32 @@ class HomeFragment : BaseMvpFragment<HomePresenterImpl>(), HomeContract.View {
         }
         articleListAdapter = ArticleListAdapter(context, null, true).apply {
             addHeaderView(bannerNew)
-        }
-        articleList?.layoutManager = LinearLayoutManager(context)
-        articleList?.adapter = articleListAdapter
-        articleListAdapter.setOnItemClickListener { viewHolder, dataItem, i ->
-            ArticleActivity.start(this!!.context!!, dataItem.link)
-        }
-        articleListAdapter.setOnItemChildClickListener(R.id.collectImg, { viewHolder, dataItem, i ->
-            changeCollectNum = i
-            if (dataItem.collect) {
-                presenter.setUnCollect(dataItem.id)
-            } else {
-                presenter.setCollect(dataItem.id)
+
+            setOnItemClickListener { viewHolder, dataItem, i ->
+                ArticleActivity.start(context, dataItem.link)
             }
-        })
+
+            setOnItemChildClickListener(R.id.collectImg, { viewHolder, dataItem, i ->
+                changeCollectNum = i
+                if (dataItem.collect) {
+                    presenter.setUnCollect(dataItem.id)
+                } else {
+                    presenter.setCollect(dataItem.id)
+                }
+            })
+
+            setOnLoadMoreListener {
+                presenter.getArticle(pageNum)
+            }
+        }
+        articleList?.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = articleListAdapter
+        }
 
         swipeRefreshLayout.setOnRefreshListener {
             swipeRefreshLayout.isRefreshing = true
+            pageNum = 0
             presenter.getArticle(pageNum)
         }
     }
@@ -105,12 +119,12 @@ class HomeFragment : BaseMvpFragment<HomePresenterImpl>(), HomeContract.View {
 
     override fun getArticleSuccess(articles: ArticleBean) {
         swipeRefreshLayout.isRefreshing = false
-        if (articleListAdapter.dataCount == 0) {
+        if (pageNum == 0) {
             articleListAdapter.setNewData(articles.datas)
         } else {
             articleListAdapter.setLoadMoreData(articles.datas)
         }
-        if (articles.total == pageNum + 1) {
+        if (articles.pageCount == pageNum + 1) {
             articleListAdapter.loadEnd()
         } else {
             pageNum++

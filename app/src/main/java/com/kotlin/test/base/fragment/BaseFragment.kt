@@ -7,11 +7,12 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.kotlin.test.base.activity.BaseActivity
 
 
 abstract class BaseFragment : Fragment() {
     protected var TAG = this.javaClass.simpleName
-
+    lateinit var context: BaseActivity
 
     /**
      * 初始化布局文件id
@@ -43,6 +44,7 @@ abstract class BaseFragment : Fragment() {
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
+        this.context = context as BaseActivity
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -5,4 +5,5 @@ package com.kotlin.test.bean.eventbus
  * @create 2018/11/22
  * @Describe
  */
-data class SystemItemId (var id : Int)
+data class SystemItemId (var id : Int,
+                         var name: String)

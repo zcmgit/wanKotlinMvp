@@ -5,6 +5,7 @@ import android.content.Intent
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
+import android.support.v4.view.ViewPager
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.kotlin.test.R
@@ -50,21 +51,21 @@ class MainHomeActivity : BaseMvpActivity<MainHomePresenterImpl>(), MainHomeContr
 
     override fun initView() {
         //toolbar点击打开左侧菜单
-        toolbar.setNavigationOnClickListener {
-            drawerLayout.openDrawer(GravityCompat.START)
-        }
-
-        //标题搜索图标
-        toolbar.inflateMenu(R.menu.menu_toolbar)
-
-        toolbar.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.action_search -> {
-                    showSearch()
-                    return@setOnMenuItemClickListener true
-                }
+        toolbar.apply {
+            setNavigationOnClickListener {
+                drawerLayout.openDrawer(GravityCompat.START)
             }
-            return@setOnMenuItemClickListener false
+            //标题搜索图标
+            inflateMenu(R.menu.menu_toolbar)
+            setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    R.id.action_search -> {
+                        showSearch()
+                        return@setOnMenuItemClickListener true
+                    }
+                }
+                return@setOnMenuItemClickListener false
+            }
         }
 
         //viewpager初始化
@@ -75,7 +76,24 @@ class MainHomeActivity : BaseMvpActivity<MainHomePresenterImpl>(), MainHomeContr
         }
         var viewPagerAdapter = ViewPagerAdapter(supportFragmentManager)
         viewPagerAdapter.setFragments(fragments)
-        viewPager.adapter = viewPagerAdapter
+        viewPager.apply {
+            adapter = viewPagerAdapter
+            addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
+                override fun onPageScrollStateChanged(p0: Int) {
+
+                }
+
+                override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {
+
+                }
+
+                override fun onPageSelected(p0: Int) {
+                    bottomNav.getMenu().getItem(p0).setChecked(true)
+                    toolBarTitle.text = bottomNav.getMenu().getItem(p0).title
+                }
+
+            })
+        }
         toolBarTitle.text = "首页"
         //底部菜单导航
         bottomNav.setOnNavigationItemSelectedListener(OnNavigationItemSelectedListener)

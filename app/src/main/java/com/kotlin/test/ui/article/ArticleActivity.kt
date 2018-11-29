@@ -9,7 +9,7 @@ import com.kotlin.test.base.activity.BaseActivity
 import kotlinx.android.synthetic.main.article_activity.*
 import android.webkit.WebView
 import android.webkit.WebViewClient
-
+import kotlinx.android.synthetic.main.tool_bar.*
 
 
 /**
@@ -36,6 +36,13 @@ class ArticleActivity : BaseActivity() {
     }
 
     override fun initView() {
+
+        toolbar.navigationIcon = this.resources.getDrawable(R.mipmap.back_icon)
+        toolBarTitle.text = "详情"
+        toolbar.setNavigationOnClickListener {
+            finish()
+        }
+
         webview.setWebViewClient(object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
                 view.loadUrl(url)

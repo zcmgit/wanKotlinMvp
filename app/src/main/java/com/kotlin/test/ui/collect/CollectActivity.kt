@@ -5,13 +5,12 @@ import android.content.Intent
 import android.support.v7.widget.LinearLayoutManager
 import com.kotlin.test.R
 import com.kotlin.test.base.activity.BaseMvpActivity
-import com.kotlin.test.base.adapter.ArticleListAdapter
-import com.kotlin.test.base.adapter.SystemAdapter
-import com.kotlin.test.bean.CollectBean
+import com.kotlin.test.base.adapter.CollectListAdapter
 import com.kotlin.test.bean.article.ArticleBean
 import com.kotlin.test.ui.article.ArticleActivity
 import kotlinx.android.synthetic.main.fragment_system.*
 import kotlinx.android.synthetic.main.tool_bar.*
+import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.toast
 
 /**
@@ -21,8 +20,9 @@ import org.jetbrains.anko.toast
  */
 class CollectActivity : BaseMvpActivity<CollectPresentImpl>(), CollectContract.View {
 
-    lateinit var articleListAdapter: ArticleListAdapter
+    lateinit var collectListAdapter: CollectListAdapter
     private var pageNum: Int = 0
+    private var collectItemNum = -1
 
     companion object {
         fun start(context: Context) {
@@ -49,18 +49,33 @@ class CollectActivity : BaseMvpActivity<CollectPresentImpl>(), CollectContract.V
             finish()
         }
 
-        articleListAdapter = ArticleListAdapter(this!!.context!!, null, false)
+        collectListAdapter = CollectListAdapter(this!!.context!!, null, false).apply {
+
+            setOnItemClickListener { viewHolder, dataItem, i ->
+                ArticleActivity.start(context, dataItem.link)
+            }
+
+            setOnItemChildClickListener(R.id.collectImg,{ viewHolder, dataItem, i ->
+                collectItemNum = i
+                presenter.setUnCollect(dataItem.id,dataItem.originId)
+            })
+
+            setOnLoadMoreListener {
+                presenter.getCollectInfos(pageNum)
+            }
+        }
         var manage = LinearLayoutManager(context)
-        articleList.layoutManager = manage
-        articleList.adapter = articleListAdapter
+        articleList.apply {
+            layoutManager = manage
+            adapter = collectListAdapter
+        }
 
         swipeRefreshLayout.setOnRefreshListener {
             swipeRefreshLayout.isRefreshing = true
+            pageNum = 0
             presenter.getCollectInfos(pageNum)
         }
-        articleListAdapter.setOnItemClickListener { viewHolder, dataItem, i ->
-            ArticleActivity.start(this, dataItem.link)
-        }
+
     }
 
     override fun initLoad() {
@@ -68,18 +83,30 @@ class CollectActivity : BaseMvpActivity<CollectPresentImpl>(), CollectContract.V
     }
 
     override fun getCollectSuccess(collectInfo: ArticleBean) {
-        if (articleListAdapter.itemCount == 0) {
-            articleListAdapter.setNewData(collectInfo.datas)
+        swipeRefreshLayout.isRefreshing = false
+        if (pageNum == 0) {
+            collectListAdapter.setNewData(collectInfo.datas)
         } else {
-            articleListAdapter.setLoadMoreData(collectInfo.datas)
+            collectListAdapter.setLoadMoreData(collectInfo.datas)
         }
-        if (pageNum == collectInfo.total) {
+        if (pageNum + 1 == collectInfo.pageCount) {
             return
         }
         pageNum++
     }
 
     override fun getCollectFail(msg: String) {
+        swipeRefreshLayout.isRefreshing = false
+        toast(msg)
+    }
+
+    override fun setUnCollectSuccess(msg: String) {
+        EventBus.getDefault().post(collectListAdapter.allData[collectItemNum])
+        collectListAdapter.remove(collectItemNum)
+        toast("取消成功")
+    }
+
+    override fun setUnCollectFail(msg: String) {
         toast(msg)
     }
 }
