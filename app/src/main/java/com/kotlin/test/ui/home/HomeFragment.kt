@@ -1,6 +1,7 @@
 package com.kotlin.test.ui.home
 
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import com.kotlin.test.R
 import com.kotlin.test.base.fragment.BaseMvpFragment
 import com.kotlin.test.bean.HomeBannerBean
@@ -31,6 +32,8 @@ class HomeFragment : BaseMvpFragment<HomePresenterImpl>(), HomeContract.View {
     private lateinit var bannerNew: Banner
     private var pageNum: Int = 0
     private var changeCollectNum: Int = -1
+
+    private var pageAllNum: Int = -1
 
     companion object {
         fun newInstance() = HomeFragment()
@@ -76,14 +79,27 @@ class HomeFragment : BaseMvpFragment<HomePresenterImpl>(), HomeContract.View {
                     presenter.setCollect(dataItem.id)
                 }
             })
-
-            setOnLoadMoreListener {
-                presenter.getArticle(pageNum)
-            }
         }
         articleList?.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = articleListAdapter
+
+            addOnScrollListener(object : RecyclerView.OnScrollListener(){
+                var lastVisibleItem: Int = -1
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    if (lastVisibleItem == articleListAdapter.dataCount && pageNum != pageAllNum) {
+                        presenter.getArticle(pageNum)
+                    }
+                }
+
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+//                    //最后一个可见的ITEM
+                    lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+                }
+            })
         }
 
         swipeRefreshLayout.setOnRefreshListener {

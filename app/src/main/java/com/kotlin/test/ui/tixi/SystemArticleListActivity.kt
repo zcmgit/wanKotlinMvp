@@ -3,6 +3,7 @@ package com.kotlin.test.ui.tixi
 import android.content.Context
 import android.content.Intent
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import com.kotlin.test.R
 import com.kotlin.test.base.activity.BaseMvpActivity
 import com.kotlin.test.base.adapter.ArticleListAdapter
@@ -22,6 +23,8 @@ class SystemArticleListActivity : BaseMvpActivity<SystemArticlePresenter>(), Sys
     private var title: String = ""
     private var pageNum: Int = 0
     private var listNum: Int = -1
+
+    private var pageAllNum: Int = -1
 
     companion object {
         fun start(context: Context, cid: Int, title: String) {
@@ -61,15 +64,12 @@ class SystemArticleListActivity : BaseMvpActivity<SystemArticlePresenter>(), Sys
             setOnItemClickListener { viewHolder, dataItem, i ->
                 ArticleActivity.start(context, dataItem.link)
             }
-            setOnLoadMoreListener {
-                presenter.getSystemArticleInfo(pageNum, cid)
-            }
 
             setOnItemChildClickListener(R.id.collectImg, { holder, item, i ->
                 listNum = i
                 if (item.collect) {
                     presenter.setUnCollect(item.id)
-                }else{
+                } else {
                     presenter.setCollect(item.id)
                 }
             })
@@ -77,8 +77,24 @@ class SystemArticleListActivity : BaseMvpActivity<SystemArticlePresenter>(), Sys
         articleList?.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = articleListAdapter
-        }
 
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                var lastVisibleItem: Int = -1
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    if (lastVisibleItem + 1 == articleListAdapter.dataCount && pageNum != pageAllNum) {
+                        presenter.getSystemArticleInfo(pageNum, cid)
+                    }
+                }
+
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+//                    //最后一个可见的ITEM
+                    lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+                }
+            })
+        }
         swipeRefreshLayout.setOnRefreshListener {
             swipeRefreshLayout.isRefreshing = true
             pageNum = 0
@@ -97,9 +113,7 @@ class SystemArticleListActivity : BaseMvpActivity<SystemArticlePresenter>(), Sys
         } else {
             articleListAdapter.setLoadMoreData(bean.datas)
         }
-        if (pageNum + 1 == bean.pageCount) {
-            return
-        }
+        pageAllNum = bean.pageCount
         pageNum++
     }
 

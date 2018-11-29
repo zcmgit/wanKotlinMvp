@@ -59,4 +59,7 @@ interface Api {
     @POST("/lg/uncollect/{id}/json")
     fun unCollectListArticle(@Path("id") id: Int,@Query("originId") originId: Int): Observable<BaseResponse<String>>
 
+    @GET("/user/logout/json")
+    fun logout(): Observable<BaseResponse<String>>
+
 }

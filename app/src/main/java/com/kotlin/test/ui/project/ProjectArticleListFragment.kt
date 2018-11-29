@@ -2,6 +2,7 @@ package com.kotlin.test.ui.project
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import com.kotlin.test.R
 import com.kotlin.test.base.adapter.ArticleListAdapter
 import com.kotlin.test.base.fragment.BaseMvpFragment
@@ -20,6 +21,7 @@ class ProjectArticleListFragment : BaseMvpFragment<ProjectArticleListPreImpl>(),
     private var cid: Int = 0
     private var pageNum: Int = 1
 
+    private var pageAllNum: Int = -1
     private var listNum: Int = -1
     lateinit var articleAdapter: ArticleListAdapter
 
@@ -70,6 +72,22 @@ class ProjectArticleListFragment : BaseMvpFragment<ProjectArticleListPreImpl>(),
         articleList.apply {
             layoutManager = manage
             adapter = articleAdapter
+
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                var lastVisibleItem: Int = -1
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    if (lastVisibleItem + 1 == articleAdapter.dataCount && pageNum - 1 != pageAllNum) {
+                        presenter.getProjectItem(pageNum, cid)
+                    }
+                }
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+//                    //最后一个可见的ITEM
+                    lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+                }
+            })
         }
 
         swipeRefreshLayout.setOnRefreshListener {
@@ -84,15 +102,16 @@ class ProjectArticleListFragment : BaseMvpFragment<ProjectArticleListPreImpl>(),
     }
 
     override fun getProjectItemSuccess(articleInfos: ArticleBean) {
+        if (swipeRefreshLayout == null){
+            return
+        }
         swipeRefreshLayout.isRefreshing = false
         if (pageNum == 0) {
             articleAdapter.setNewData(articleInfos.datas)
         } else {
             articleAdapter.setLoadMoreData(articleInfos.datas)
         }
-        if (pageNum == articleInfos.pageCount) {
-            return
-        }
+        pageAllNum = articleInfos.pageCount
         pageNum++
 
     }

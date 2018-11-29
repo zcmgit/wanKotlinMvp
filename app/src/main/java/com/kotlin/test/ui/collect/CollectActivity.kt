@@ -3,6 +3,7 @@ package com.kotlin.test.ui.collect
 import android.content.Context
 import android.content.Intent
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import com.kotlin.test.R
 import com.kotlin.test.base.activity.BaseMvpActivity
 import com.kotlin.test.base.adapter.CollectListAdapter
@@ -23,6 +24,8 @@ class CollectActivity : BaseMvpActivity<CollectPresentImpl>(), CollectContract.V
     lateinit var collectListAdapter: CollectListAdapter
     private var pageNum: Int = 0
     private var collectItemNum = -1
+
+    private var pageAllNum: Int = -1
 
     companion object {
         fun start(context: Context) {
@@ -60,14 +63,28 @@ class CollectActivity : BaseMvpActivity<CollectPresentImpl>(), CollectContract.V
                 presenter.setUnCollect(dataItem.id,dataItem.originId)
             })
 
-            setOnLoadMoreListener {
-                presenter.getCollectInfos(pageNum)
-            }
         }
         var manage = LinearLayoutManager(context)
         articleList.apply {
             layoutManager = manage
             adapter = collectListAdapter
+
+            addOnScrollListener(object : RecyclerView.OnScrollListener(){
+                var lastVisibleItem: Int = -1
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    if (lastVisibleItem + 1 == collectListAdapter.dataCount && pageNum != pageAllNum) {
+                        presenter.getCollectInfos(pageNum)
+                    }
+                }
+
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+//                    //最后一个可见的ITEM
+                    lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+                }
+            })
         }
 
         swipeRefreshLayout.setOnRefreshListener {
@@ -89,9 +106,7 @@ class CollectActivity : BaseMvpActivity<CollectPresentImpl>(), CollectContract.V
         } else {
             collectListAdapter.setLoadMoreData(collectInfo.datas)
         }
-        if (pageNum + 1 == collectInfo.pageCount) {
-            return
-        }
+        pageAllNum = collectInfo.pageCount
         pageNum++
     }
 

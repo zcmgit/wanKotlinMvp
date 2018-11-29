@@ -27,8 +27,7 @@ import com.zhy.view.flowlayout.TagFlowLayout
 import org.jetbrains.anko.toast
 import java.lang.reflect.AccessibleObject.setAccessible
 import android.support.v4.content.ContextCompat
-
-
+import android.support.v7.widget.RecyclerView
 
 
 /**
@@ -41,6 +40,10 @@ class SearchActivity : BaseMvpActivity<SearchPresenter>(), SearchContract.View {
     private var searchView: SearchView? = null
     private var pageNum: Int = 0
     private var listNum: Int = -1
+    private var searchInfos: String = ""
+
+    private var pageAllNum: Int = -1
+
 
     private lateinit var articleListAdapter: ArticleListAdapter
 
@@ -87,6 +90,7 @@ class SearchActivity : BaseMvpActivity<SearchPresenter>(), SearchContract.View {
                     } else {
                         articleListAdapter.setNewData(arrayListOf())
                         pageNum = 0
+                        searchInfos = p0
                         presenter.searchInfoByKey(pageNum, p0)
                         SPUtil.setHistoryInfo(p0)
                     }
@@ -102,10 +106,10 @@ class SearchActivity : BaseMvpActivity<SearchPresenter>(), SearchContract.View {
 
         var textView: SearchView.SearchAutoComplete = searchView!!.findViewById(R.id.search_src_text)
         textView.setTextColor(getResources().getColor(R.color.colorAccent))
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP,13.0f)
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13.0f)
         textView.setBackgroundResource(R.drawable.rect_cccccc_ffffff_6)
         val underline = searchView!!.findViewById(R.id.search_plate) as View
-        underline.setBackgroundColor(ContextCompat.getColor(this,R.color.colorAccent))
+        underline.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccent))
 
         articleListAdapter = ArticleListAdapter(context, null, true).apply {
             setOnItemClickListener { viewHolder, dataItem, i ->
@@ -116,14 +120,31 @@ class SearchActivity : BaseMvpActivity<SearchPresenter>(), SearchContract.View {
                 listNum = i
                 if (item.collect) {
                     presenter.setUnCollect(item.id)
-                }else{
+                } else {
                     presenter.setCollect(item.id)
                 }
             })
-
         }
-        searchList?.layoutManager = LinearLayoutManager(context)
-        searchList?.adapter = articleListAdapter
+
+        searchList?.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = articleListAdapter
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                var lastVisibleItem: Int = -1
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    if (lastVisibleItem + 1 == articleListAdapter.dataCount && pageNum != pageAllNum) {
+                        presenter.searchInfoByKey(pageNum,searchInfos)
+                    }
+                }
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+//                    //最后一个可见的ITEM
+                    lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+                }
+            })
+        }
         deleteIcon.setOnClickListener {
             SPUtil.remove("history_web")
             historyLayout.visibility = View.GONE
@@ -161,7 +182,8 @@ class SearchActivity : BaseMvpActivity<SearchPresenter>(), SearchContract.View {
                 override fun onTagClick(view: View?, position: Int, parent: FlowLayout?): Boolean {
                     articleListAdapter.setNewData(arrayListOf())
                     pageNum = 0
-                    presenter.searchInfoByKey(pageNum, historyInfos.get(position))
+                    searchInfos = historyInfos.get(position)
+                    presenter.searchInfoByKey(pageNum, searchInfos)
                     return true
                 }
             })
@@ -185,7 +207,8 @@ class SearchActivity : BaseMvpActivity<SearchPresenter>(), SearchContract.View {
             override fun onTagClick(view: View?, position: Int, parent: FlowLayout?): Boolean {
                 articleListAdapter.setNewData(arrayListOf())
                 pageNum = 0
-                presenter.searchInfoByKey(pageNum, hotInfos.get(position))
+                searchInfos = hotInfos.get(position)
+                presenter.searchInfoByKey(pageNum, searchInfos)
                 return true
             }
         })
@@ -231,11 +254,8 @@ class SearchActivity : BaseMvpActivity<SearchPresenter>(), SearchContract.View {
         } else {
             articleListAdapter.setLoadMoreData(articles.datas)
         }
-        if (articles.total == pageNum + 1) {
-            articleListAdapter.loadEnd()
-        } else {
+        pageAllNum = articles.pageCount
             pageNum++
-        }
     }
 
     override fun searchInfoFail(msg: String) {
