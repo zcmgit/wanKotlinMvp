@@ -15,6 +15,35 @@ import com.kotlin.test.bean.article.ArticleBean
  * @Describe
  */
 class SearchPresenter (view: SearchContract.View) : BasePresenter<SearchContract.View>(view),SearchContract.Presenter{
+
+    override fun setUnCollect(id: Int) {
+        RequestManager.execute(this,RetrofitManager.create(Api::class.java).setUnCollect(id),
+                object : BaseObserver<String>(){
+                    override fun onSuccess(t: String) {
+                        view.setUnCollectSuccess(t)
+                    }
+
+                    override fun onFail(code: Int, msg: String) {
+                        view.setUnCollectFail(msg)
+                    }
+
+                })
+    }
+
+    override fun setCollect(id: Int) {
+        RequestManager.execute(this,RetrofitManager.create(Api::class.java).setCollect(id),
+                object : BaseObserver<String>(){
+                    override fun onSuccess(t: String) {
+                        view.setCollectSuccess(t)
+                    }
+
+                    override fun onFail(code: Int, msg: String) {
+                        view.setCollectFail(msg)
+                    }
+
+                })
+    }
+
     override fun searchInfoByKey(pageNum: Int, key: String) {
         RequestManager.execute(this, RetrofitManager.create(Api :: class.java).searchInfoByKey(pageNum, key),
                 object : BaseObserver<ArticleBean>(){

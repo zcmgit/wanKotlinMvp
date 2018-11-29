@@ -40,6 +40,7 @@ class SearchActivity : BaseMvpActivity<SearchPresenter>(), SearchContract.View {
 
     private var searchView: SearchView? = null
     private var pageNum: Int = 0
+    private var listNum: Int = -1
 
     private lateinit var articleListAdapter: ArticleListAdapter
 
@@ -75,8 +76,8 @@ class SearchActivity : BaseMvpActivity<SearchPresenter>(), SearchContract.View {
         }
         toolbar.inflateMenu(R.menu.menu_search_view)
         searchView = toolbar.menu.findItem(R.id.action_search).actionView as SearchView
-        searchView!!.clearFocus()
         searchView!!.run {
+            clearFocus()
             onActionViewExpanded()
             setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(p0: String): Boolean {
@@ -106,13 +107,23 @@ class SearchActivity : BaseMvpActivity<SearchPresenter>(), SearchContract.View {
         val underline = searchView!!.findViewById(R.id.search_plate) as View
         underline.setBackgroundColor(ContextCompat.getColor(this,R.color.colorAccent))
 
-        articleListAdapter = ArticleListAdapter(context, null, true)
+        articleListAdapter = ArticleListAdapter(context, null, true).apply {
+            setOnItemClickListener { viewHolder, dataItem, i ->
+                ArticleActivity.start(context, dataItem.link)
+            }
+
+            setOnItemChildClickListener(R.id.collectImg, { holder, item, i ->
+                listNum = i
+                if (item.collect) {
+                    presenter.setUnCollect(item.id)
+                }else{
+                    presenter.setCollect(item.id)
+                }
+            })
+
+        }
         searchList?.layoutManager = LinearLayoutManager(context)
         searchList?.adapter = articleListAdapter
-        articleListAdapter.setOnItemClickListener { viewHolder, dataItem, i ->
-            ArticleActivity.start(this!!.context!!, dataItem.link)
-        }
-
         deleteIcon.setOnClickListener {
             SPUtil.remove("history_web")
             historyLayout.visibility = View.GONE
@@ -238,5 +249,25 @@ class SearchActivity : BaseMvpActivity<SearchPresenter>(), SearchContract.View {
         } else {
             finish()
         }
+    }
+
+    override fun setCollectSuccess(msg: String) {
+        articleListAdapter.getData(listNum).collect = true
+        articleListAdapter.change(listNum)
+        context.toast("收藏成功")
+    }
+
+    override fun setCollectFail(msg: String) {
+        context.toast(msg)
+    }
+
+    override fun setUnCollectSuccess(msg: String) {
+        articleListAdapter.getData(listNum).collect = false
+        articleListAdapter.change(listNum)
+        context.toast("取消成功")
+    }
+
+    override fun setUnCollectFail(msg: String) {
+        context.toast(msg)
     }
 }

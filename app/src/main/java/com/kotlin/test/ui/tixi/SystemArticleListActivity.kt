@@ -10,6 +10,7 @@ import com.kotlin.test.bean.article.ArticleBean
 import com.kotlin.test.ui.article.ArticleActivity
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.tool_bar.*
+import org.jetbrains.anko.toast
 
 /**
  * @author zcm
@@ -20,6 +21,7 @@ class SystemArticleListActivity : BaseMvpActivity<SystemArticlePresenter>(), Sys
     private var cid: Int = 0
     private var title: String = ""
     private var pageNum: Int = 0
+    private var listNum: Int = -1
 
     companion object {
         fun start(context: Context, cid: Int, title: String) {
@@ -62,9 +64,20 @@ class SystemArticleListActivity : BaseMvpActivity<SystemArticlePresenter>(), Sys
             setOnLoadMoreListener {
                 presenter.getSystemArticleInfo(pageNum, cid)
             }
+
+            setOnItemChildClickListener(R.id.collectImg, { holder, item, i ->
+                listNum = i
+                if (item.collect) {
+                    presenter.setUnCollect(item.id)
+                }else{
+                    presenter.setCollect(item.id)
+                }
+            })
         }
-        articleList?.layoutManager = LinearLayoutManager(this)
-        articleList?.adapter = articleListAdapter
+        articleList?.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = articleListAdapter
+        }
 
         swipeRefreshLayout.setOnRefreshListener {
             swipeRefreshLayout.isRefreshing = true
@@ -93,4 +106,25 @@ class SystemArticleListActivity : BaseMvpActivity<SystemArticlePresenter>(), Sys
     override fun getSystemArticleFail(msg: String) {
         swipeRefreshLayout.isRefreshing = false
     }
+
+    override fun setCollectSuccess(msg: String) {
+        articleListAdapter.getData(listNum).collect = true
+        articleListAdapter.change(listNum)
+        context.toast("收藏成功")
+    }
+
+    override fun setCollectFail(msg: String) {
+        context.toast(msg)
+    }
+
+    override fun setUnCollectSuccess(msg: String) {
+        articleListAdapter.getData(listNum).collect = false
+        articleListAdapter.change(listNum)
+        context.toast("取消成功")
+    }
+
+    override fun setUnCollectFail(msg: String) {
+        context.toast(msg)
+    }
+
 }

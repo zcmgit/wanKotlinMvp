@@ -8,24 +8,27 @@ import com.kotlin.test.base.fragment.BaseMvpFragment
 import com.kotlin.test.bean.article.ArticleBean
 import com.kotlin.test.ui.article.ArticleActivity
 import kotlinx.android.synthetic.main.project_article_item.*
+import org.jetbrains.anko.toast
 
 /**
  * @author zcm
  * @create 2018/11/22
  * @Describe
  */
-class ProjectArticleListFragment : BaseMvpFragment<ProjectArticleListPreImpl>(), ProjectArticleListContract.View{
+class ProjectArticleListFragment : BaseMvpFragment<ProjectArticleListPreImpl>(), ProjectArticleListContract.View {
 
-    private var cid : Int = 0
-    private var pageNum : Int = 1
+    private var cid: Int = 0
+    private var pageNum: Int = 1
 
-    lateinit var adapter : ArticleListAdapter
+    private var listNum: Int = -1
+    lateinit var articleAdapter: ArticleListAdapter
+
     companion object {
-        fun newInstance(cid : Int) =
+        fun newInstance(cid: Int) =
                 ProjectArticleListFragment().apply {
-                   arguments = Bundle().apply {
-                       putInt("cid",cid)
-                   }
+                    arguments = Bundle().apply {
+                        putInt("cid", cid)
+                    }
                 }
 
     }
@@ -45,45 +48,77 @@ class ProjectArticleListFragment : BaseMvpFragment<ProjectArticleListPreImpl>(),
     }
 
     override fun initView() {
-        adapter = ArticleListAdapter(this!!.context!!,null,false).apply {
+        articleAdapter = ArticleListAdapter(this!!.context!!, null, false).apply {
             setOnItemClickListener { holder, item, i ->
-                ArticleActivity.start(context,item.link)
+                ArticleActivity.start(context, item.link)
             }
 
+            setOnItemChildClickListener(R.id.collectImg, { holder, item, i ->
+                listNum = i
+                if (item.collect) {
+                    presenter.setUnCollect(item.id)
+                }else{
+                    presenter.setCollect(item.id)
+                }
+            })
+
             setOnLoadMoreListener {
-                presenter.getProjectItem(pageNum,cid)
+                presenter.getProjectItem(pageNum, cid)
             }
         }
         var manage = LinearLayoutManager(context)
-        articleList.layoutManager = manage
-        articleList.adapter = adapter
+        articleList.apply {
+            layoutManager = manage
+            adapter = articleAdapter
+        }
 
         swipeRefreshLayout.setOnRefreshListener {
             swipeRefreshLayout.isRefreshing = true
             pageNum = 0
-            presenter.getProjectItem(pageNum,cid)
+            presenter.getProjectItem(pageNum, cid)
         }
     }
 
     override fun initLoad() {
-        presenter.getProjectItem(pageNum,cid)
+        presenter.getProjectItem(pageNum, cid)
     }
 
     override fun getProjectItemSuccess(articleInfos: ArticleBean) {
         swipeRefreshLayout.isRefreshing = false
-        if(pageNum == 0){
-            adapter.setNewData(articleInfos.datas)
-        }else{
-            adapter.setLoadMoreData(articleInfos.datas)
+        if (pageNum == 0) {
+            articleAdapter.setNewData(articleInfos.datas)
+        } else {
+            articleAdapter.setLoadMoreData(articleInfos.datas)
         }
-        if(pageNum == articleInfos.pageCount){
+        if (pageNum == articleInfos.pageCount) {
             return
         }
-        pageNum ++
+        pageNum++
 
     }
 
     override fun getProjectItemFail(msg: String) {
         swipeRefreshLayout.isRefreshing = false
     }
+
+    override fun setCollectSuccess(msg: String) {
+        articleAdapter.getData(listNum).collect = true
+        articleAdapter.change(listNum)
+        context.toast("收藏成功")
+    }
+
+    override fun setCollectFail(msg: String) {
+        context.toast(msg)
+    }
+
+    override fun setUnCollectSuccess(msg: String) {
+        articleAdapter.getData(listNum).collect = false
+        articleAdapter.change(listNum)
+        context.toast("取消成功")
+    }
+
+    override fun setUnCollectFail(msg: String) {
+        context.toast(msg)
+    }
+
 }

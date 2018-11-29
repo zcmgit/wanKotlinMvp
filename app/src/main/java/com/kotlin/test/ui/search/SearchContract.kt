@@ -20,11 +20,21 @@ class SearchContract {
 
         fun searchInfoSuccess(articles: ArticleBean)
         fun searchInfoFail(msg: String)
+
+        fun setCollectSuccess(msg: String)
+        fun setCollectFail(msg: String)
+
+        fun setUnCollectSuccess(msg: String)
+        fun setUnCollectFail(msg: String)
+
     }
 
     interface Presenter{
         fun getHotInfos()
         fun getFriendWebInfos()
         fun searchInfoByKey(pageNum: Int,key: String)
+
+        fun setCollect(id: Int)
+        fun setUnCollect(id: Int)
     }
 }

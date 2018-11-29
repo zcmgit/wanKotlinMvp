@@ -15,6 +15,34 @@ import com.kotlin.test.ui.home.ProjectContract
  * @Describe
  */
 class ProjectArticleListPreImpl(view: ProjectArticleListContract.View) : BasePresenter<ProjectArticleListContract.View>(view), ProjectArticleListContract.Presenter {
+    override fun setUnCollect(id: Int) {
+        RequestManager.execute(this,RetrofitManager.create(Api::class.java).setUnCollect(id),
+                object : BaseObserver<String>(){
+                    override fun onSuccess(t: String) {
+                        view.setUnCollectSuccess(t)
+                    }
+
+                    override fun onFail(code: Int, msg: String) {
+                        view.setUnCollectFail(msg)
+                    }
+
+                })
+    }
+
+    override fun setCollect(id: Int) {
+        RequestManager.execute(this,RetrofitManager.create(Api::class.java).setCollect(id),
+                object : BaseObserver<String>(){
+                    override fun onSuccess(t: String) {
+                        view.setCollectSuccess(t)
+                    }
+
+                    override fun onFail(code: Int, msg: String) {
+                        view.setCollectFail(msg)
+                    }
+
+                })
+    }
+
     override fun getProjectItem(pageNum: Int, cid: Int) {
         RequestManager.execute(this,RetrofitManager.create(Api :: class.java).getProjectListInfo(pageNum, cid),
                 object : BaseObserver<ArticleBean>(){
@@ -28,5 +56,4 @@ class ProjectArticleListPreImpl(view: ProjectArticleListContract.View) : BasePre
 
                 })
     }
-
 }

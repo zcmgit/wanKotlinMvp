@@ -12,9 +12,17 @@ class SystemArticleContract{
     interface View : BaseView{
         fun getSystemArticleSuccess(bean: ArticleBean)
         fun getSystemArticleFail(msg : String)
+
+        fun setCollectSuccess(msg: String)
+        fun setCollectFail(msg: String)
+
+        fun setUnCollectSuccess(msg: String)
+        fun setUnCollectFail(msg: String)
     }
 
     interface Present{
         fun getSystemArticleInfo(pageNum : Int ,cid : Int)
+        fun setCollect(id: Int)
+        fun setUnCollect(id: Int)
     }
 }
