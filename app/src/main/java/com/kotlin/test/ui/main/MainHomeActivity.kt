@@ -6,6 +6,7 @@ import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v4.view.ViewPager
+import android.view.MenuItem
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.kotlin.test.R
@@ -19,6 +20,7 @@ import com.kotlin.test.ui.home.ProjectFragment
 import com.kotlin.test.ui.login.LoginActivity
 import com.kotlin.test.ui.search.SearchActivity
 import com.kotlin.test.ui.tixi.SystemFragment
+import com.kotlin.test.ui.vipcn.VipcnFragment
 import com.kotlin.test.util.sp.SPUtil
 import kotlinx.android.synthetic.main.main_activity.*
 import org.jetbrains.anko.toast
@@ -31,7 +33,7 @@ import org.jetbrains.anko.toast
 class MainHomeActivity : BaseMvpActivity<MainHomePresenterImpl>(), MainHomeContract.View {
 
     private lateinit var userNameTxt: TextView
-
+    private lateinit var searchView: MenuItem
     companion object {
         fun start(context: Context){
             var intent = Intent(context,MainHomeActivity::class.java)
@@ -52,6 +54,7 @@ class MainHomeActivity : BaseMvpActivity<MainHomePresenterImpl>(), MainHomeContr
 
 
     override fun initView() {
+
         //toolbar点击打开左侧菜单
         toolbar.apply {
             setNavigationOnClickListener {
@@ -69,12 +72,13 @@ class MainHomeActivity : BaseMvpActivity<MainHomePresenterImpl>(), MainHomeContr
                 return@setOnMenuItemClickListener false
             }
         }
-
+        searchView = toolbar.menu.findItem(R.id.action_search) as MenuItem
         //viewpager初始化
         var fragments = arrayListOf<Fragment>().apply {
             add(HomeFragment.newInstance())
             add(SystemFragment.newInstance())
             add(ProjectFragment.newInstance())
+            add(VipcnFragment.newInstance())
         }
         var viewPagerAdapter = ViewPagerAdapter(supportFragmentManager)
         viewPagerAdapter.setFragments(fragments)
@@ -92,6 +96,11 @@ class MainHomeActivity : BaseMvpActivity<MainHomePresenterImpl>(), MainHomeContr
                 override fun onPageSelected(p0: Int) {
                     bottomNav.getMenu().getItem(p0).setChecked(true)
                     toolBarTitle.text = bottomNav.getMenu().getItem(p0).title
+                    if(p0 == 3){
+                        searchView!!.isVisible = false
+                    }else{
+                        searchView.isVisible = true
+                    }
                 }
 
             })
@@ -99,7 +108,6 @@ class MainHomeActivity : BaseMvpActivity<MainHomePresenterImpl>(), MainHomeContr
         toolBarTitle.text = "首页"
         //底部菜单导航
         bottomNav.setOnNavigationItemSelectedListener(OnNavigationItemSelectedListener)
-
         //侧滑菜单：
         navigetion_view.setNavigationItemSelectedListener { item ->
             drawerLayout.closeDrawer(GravityCompat.START)
@@ -153,6 +161,15 @@ class MainHomeActivity : BaseMvpActivity<MainHomePresenterImpl>(), MainHomeContr
                 viewPager.currentItem = 2
                 return@OnNavigationItemSelectedListener true
             }
+            R.id.menu_vipcn -> {
+                viewPager.currentItem = 3
+                return@OnNavigationItemSelectedListener true
+            }
+        }
+        if(viewPager.currentItem == 3){
+            searchView!!.isVisible = false
+        }else{
+            searchView.isVisible = true
         }
         false
     }

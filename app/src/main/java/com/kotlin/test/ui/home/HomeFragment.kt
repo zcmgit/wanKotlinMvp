@@ -35,6 +35,8 @@ class HomeFragment : BaseMvpFragment<HomePresenterImpl>(), HomeContract.View {
 
     private var pageAllNum: Int = -1
 
+    private var bannerBeans: List<HomeBannerBean> = arrayListOf()
+
     companion object {
         fun newInstance() = HomeFragment()
     }
@@ -61,7 +63,7 @@ class HomeFragment : BaseMvpFragment<HomePresenterImpl>(), HomeContract.View {
             isAutoPlay(true)
             setIndicatorGravity(BannerConfig.CENTER)
             setOnBannerListener { it ->
-
+                ArticleActivity.start(context,bannerBeans[it].url)
             }
         }
         articleListAdapter = ArticleListAdapter(context, null, true).apply {
@@ -115,6 +117,7 @@ class HomeFragment : BaseMvpFragment<HomePresenterImpl>(), HomeContract.View {
     }
 
     override fun getBannerSuccess(bannerBean: List<HomeBannerBean>) {
+        bannerBeans = bannerBean
         var imageList = arrayListOf<String>()
         var title = arrayListOf<String>()
         for (bean in bannerBean) {

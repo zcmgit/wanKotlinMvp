@@ -4,16 +4,17 @@
     <item
         android:id="@+id/menu_home"
         android:icon="@mipmap/home_icon"
-        android:title="首页">
-    </item>
+        android:title="首页"></item>
     <item
         android:id="@+id/menu_tixi"
         android:icon="@mipmap/system_icon"
-        android:title="体系">
-    </item>
+        android:title="体系"></item>
     <item
         android:id="@+id/menu_project"
         android:icon="@mipmap/project_icon"
-        android:title="项目">
-    </item>
+        android:title="项目"></item>
+    <item
+        android:id="@+id/menu_vipcn"
+        android:icon="@mipmap/vipcn_icon"
+        android:title="公众号"></item>
 </menu>

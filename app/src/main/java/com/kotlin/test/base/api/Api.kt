@@ -4,6 +4,8 @@ import com.kotlin.test.base.network.BaseResponse
 import com.kotlin.test.bean.*
 import com.kotlin.test.bean.article.ArticleBean
 import com.kotlin.test.bean.system.SystemInfoBean
+import com.kotlin.test.bean.vipcn.VipcnItemBean
+import com.kotlin.test.bean.vipcn.VipcnBean
 import io.reactivex.Observable
 import retrofit2.http.*
 
@@ -42,7 +44,7 @@ interface Api {
     fun getCollectInfos(@Path("pageNum") pageNum: Int): Observable<BaseResponse<ArticleBean>>
 
     @POST("/lg/collect/{id}/json")
-    fun setCollect(@Path("id") id : Int): Observable<BaseResponse<String>>
+    fun setCollect(@Path("id") id: Int): Observable<BaseResponse<String>>
 
     @POST("/lg/uncollect_originId/{id}/json")
     fun setUnCollect(@Path("id") id: Int): Observable<BaseResponse<String>>
@@ -54,12 +56,20 @@ interface Api {
     fun getFriendWebInfos(): Observable<BaseResponse<List<WebBean>>>
 
     @POST("/article/query/{pageNum}/json")
-    fun searchInfoByKey(@Path("pageNum") pageNum: Int, @Query("k") key: String) : Observable<BaseResponse<ArticleBean>>
+    fun searchInfoByKey(@Path("pageNum") pageNum: Int, @Query("k") key: String): Observable<BaseResponse<ArticleBean>>
 
     @POST("/lg/uncollect/{id}/json")
-    fun unCollectListArticle(@Path("id") id: Int,@Query("originId") originId: Int): Observable<BaseResponse<String>>
+    fun unCollectListArticle(@Path("id") id: Int, @Query("originId") originId: Int): Observable<BaseResponse<String>>
 
     @GET("/user/logout/json")
     fun logout(): Observable<BaseResponse<String>>
 
+    @GET("/wxarticle/chapters/json")
+    fun getVipcnInfo(): Observable<BaseResponse<List<VipcnBean>>>
+
+    @GET("/wxarticle/list/{id}/{pageNum}/json")
+    fun getVipcnInfoById(@Path("id") id: Int, @Path("pageNum") pageNum: Int): Observable<BaseResponse<VipcnItemBean>>
+
+    @GET("/wxarticle/list/{id}/{pageNum}/json?")
+    fun searchVipcnInfo(@Path("id") id: Int, @Path("pageNum") pageNum: Int, @Query("k") key: String): Observable<BaseResponse<VipcnItemBean>>
 }

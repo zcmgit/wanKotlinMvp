@@ -50,7 +50,8 @@
             android:layout_height="60dp"
             app:itemIconTint="@drawable/select_bottom_nav"
             app:itemTextColor="@drawable/select_bottom_nav"
-            app:menu="@menu/menu_bottom" />
+            app:menu="@menu/menu_bottom"
+            app:labelVisibilityMode="labeled" />
     </LinearLayout>
 
     <!--侧滑菜单-->
